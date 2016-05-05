@@ -7,7 +7,7 @@ Puppet::Type.newtype(:neutron_lbaas_service_config) do
     newvalues(/\S+\/\S+/)
   end
 
-  newproperty(:value, :array_matching => :all) do
+  newproperty(:value) do
     desc 'The value of the setting to be defined.'
     def insync?(is)
       return true if @should.empty?

@@ -43,6 +43,7 @@
 class neutron::agents::lbaas (
   $package_ensure         = present,
   $enabled                = true,
+  $version                = 1,
   $manage_service         = true,
   $debug                  = false,
   $interface_driver       = 'neutron.agent.linux.interface.OVSInterfaceDriver',
@@ -103,9 +104,17 @@ class neutron::agents::lbaas (
     Package['neutron-lbaas-agent'] ~> Service['neutron-lbaas-service']
   }
 
+  if $version == 1 {
+    $service_name = $::neutron::params::lbaas_agent_service
+  } elsif $version == 2 {
+      $service_name = $::neutron::params::lbaasv2_agent_service
+  } else {
+    fail('Invalid LBaaS version ${version}')
+  }
+
   service { 'neutron-lbaas-service':
     ensure  => $service_ensure,
-    name    => $::neutron::params::lbaas_agent_service,
+    name    => $service_name,
     enable  => $enabled,
     require => Class['neutron'],
     tag     => 'neutron-service',
